@@ -55,7 +55,7 @@ templates/
   images/base.py        # Locked Modal image definition (apt/pip deps)
   webhook_patterns/      # YAML descriptors mapping external webhook payloads to flow inputs
     generic.yaml
-    GitHub.yaml
+    github.yaml
     lark.yaml
     linear.yaml
 PLAN.md   # Phase breakdown (A–E) for the spike
@@ -104,7 +104,7 @@ CREATE TABLE ...   -- active SQLite statements, uncommented
 ### Migration Map
 
 1. **001_init.sql** — `users`, `plugins` (+ seeds 4 built-in plugins: `bl1nk-core`,
-   `bl1nk-linear`, `bl1nk-lark`, `bl1nk-GitHub`).
+   `bl1nk-linear`, `bl1nk-lark`, `bl1nk-github`).
 2. **002_flows.sql** — `flows`, `flow_nodes`, `flow_edges` (the flow graph itself).
 3. **003_versions.sql** — `flow_versions`, `flow_heads`, `flow_deployments`
    (git-style snapshot/versioning + single-active-deployment enforcement).
@@ -144,7 +144,7 @@ mapping:                  # dot-path lookups into payload_example
 ```
 
 When adding a new integration, add a new `templates/webhook_patterns/<service>.yaml`
-following this same structure (see `linear.yaml`, `GitHub.yaml`, `lark.yaml` for
+following this same structure (see `linear.yaml`, `github.yaml`, `lark.yaml` for
 examples; `generic.yaml` is the fallback/catch-all pattern using `events: ["*"]`).
 
 ## Modal Runner (`templates/modal_runner.py`)

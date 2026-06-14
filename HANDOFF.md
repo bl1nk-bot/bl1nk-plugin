@@ -60,7 +60,7 @@ bl1nk-plugin/
 │   └── images/
 │       └── base.py          ← Modal image definition
 └── scripts/
-    ├── bootstrap.sh         ← C1 (ยังไม่มี)
+    ├── bootstrap.sh         ← C1 ✅
     ├── validate_flow.py     ← C2 (ยังไม่มี)
     ├── dry_run.py           ← C2 (ยังไม่มี)
     └── deploy_flow.py       ← C3 (ยังไม่มี)
@@ -289,8 +289,8 @@ dry_run: simulate ทุก node กับ mock payload, return estimated tokens
 # mock: ไม่ต้องมี Linear จริง
 curl -X POST https://[modal-url]/webhook \
   -H "Content-Type: application/json" \
-  -d @templates/webhook_patterns/linear.yaml
+  -d '{"action": "issue.created", "data": {"id": "LNR-123", "title": "Test issue"}}'
 
 # ดู result ใน Lark + เช็ค memories table
-sqlite3 bl1nk.db "SELECT summary FROM memories ORDER BY created_at DESC LIMIT 1;"
+sqlite3 /data/bl1nk.db "SELECT summary FROM memories ORDER BY created_at DESC LIMIT 1;"
 ```

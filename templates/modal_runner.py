@@ -1,41 +1,52 @@
 import modal
 import sqlite3
 import json
-import asyncio
-from typing import Dict, Any, List, Optional
+import uuid
 from datetime import datetime
+from typing import Dict, Any, List, Optional
 
-# stub definition
-stub = modal.Stub("bl1nk-runner")
+app = modal.App("bl1nk")
+
+# image definition (Phase B2 will lock this further)
+image = modal.Image.debian_slim().pip_install(
+    "sqlite3",
+    "pyyaml",
+    "requests",
+    "pydantic"
+)
 
 # volume for persistence
 volume = modal.Volume.from_name("bl1nk-data")
 DB_PATH = "/data/bl1nk.db"
 
-# image definition (Phase B2 will lock this further)
-image = modal.Image.debian_slim().pip_install(
-    "sqlite3", 
-    "pyyaml", 
-    "requests", 
-    "pydantic"
-)
 
-@stub.function(
-    image=image, 
+@app.function(
+    image=image,
     volumes={"/data": volume},
     secrets=[modal.Secret.from_name("bl1nk-secrets")]
 )
-@modal.web_endpoint(method="POST")
-async def webhook(payload: Dict[str, Any]):
-    """Entry point for all external triggers."""
-    # 1. Identify flow by some logic (e.g. path or payload header)
-    # For spike: assume we run the latest 'active' deployment
-    
-    runner = ModalRunner()
-    result = await runner.run_active_flow.remote_gen(payload)
-    return result
+@modal.asgi_app()
+def webhook():
+    """Entry point for all external triggers via FastAPI."""
+    from fastapi import FastAPI
+    from fastapi.responses import JSONResponse
 
-@stub.cls(
+    web_app = FastAPI()
+
+    @web_app.post("/")
+    async def handle_webhook(payload: Dict[str, Any], request: Optional[Any] = None):
+        from fastapi import Request
+        flow_id = None
+        if isinstance(request, Request):
+            flow_id = request.headers.get("X-Bl1nk-Flow-ID")
+        
+        runner = ModalRunner()
+        result = await runner.run_active_flow.remote_gen(payload, flow_id)
+        return JSONResponse(content=result)
+
+    return web_app
+
+@app.cls(
     image=image,
     volumes={"/data": volume},
     secrets=[modal.Secret.from_name("bl1nk-secrets")]
@@ -48,17 +59,25 @@ class ModalRunner:
         return sqlite3.connect(self.db_path)
 
     @modal.method()
-    async def run_active_flow(self, trigger_payload: Dict[str, Any]):
+    async def run_active_flow(self, trigger_payload: Dict[str, Any], flow_id: Optional[str] = None):
         conn = self._get_conn()
         cursor = conn.cursor()
         
         # 1. Get active deployment
-        cursor.execute("""
-            SELECT d.flow_id, d.version_id, v.snapshot 
-            FROM flow_deployments d
-            JOIN flow_versions v ON d.version_id = v.id
-            WHERE d.status = 'active' LIMIT 1
-        """)
+        if flow_id:
+            cursor.execute("""
+                SELECT d.flow_id, d.version_id, v.snapshot 
+                FROM flow_deployments d
+                JOIN flow_versions v ON d.version_id = v.id
+                WHERE d.flow_id = ? AND d.status = 'active' LIMIT 1
+            """, (flow_id,))
+        else:
+            cursor.execute("""
+                SELECT d.flow_id, d.version_id, v.snapshot 
+                FROM flow_deployments d
+                JOIN flow_versions v ON d.version_id = v.id
+                WHERE d.status = 'active' LIMIT 1
+            """)
         row = cursor.fetchone()
         if not row:
             return {"status": "error", "message": "No active deployment found"}

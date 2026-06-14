@@ -106,12 +106,14 @@ id: TEXT PRIMARY KEY
 flow_id, version_num, snapshot (JSON), created_at, message
 
 -- flow_heads (HEAD pointer)
-id: TEXT PRIMARY KEY
-flow_id, head_version_id, updated_at
+flow_id: TEXT PRIMARY KEY REFERENCES flows(id)
+version_id: TEXT REFERENCES flow_versions(id)
+branch: TEXT, updated_at: TEXT
 
 -- flow_deployments (active webhook receiver)
 id: TEXT PRIMARY KEY
-flow_id, version_id, status, deployed_at, UNIQUE(status) WHERE status='active'
+flow_id, version_id, status, deployed_at, deployed_by, webhook_url
+(Note: trigger enforces single active deployment per flow)
 
 -- node_types (registry)
 id: TEXT PRIMARY KEY
@@ -275,4 +277,4 @@ bl1nk webhook listen --port 4000
 4. context_ledger บันทึก tokens จริง
 5. `bl1nk flow log` แสดง run history
 
-Mock test: `curl -X POST [modal-url]/webhook -d @webhook_patterns/linear.yaml`
+Mock test: `curl -X POST [modal-url]/webhook -H "Content-Type: application/json" -d '{"action": "issue.created", "data": {"id": "LNR-123", "title": "Test issue"}}'`
