@@ -1,0 +1,36 @@
+# Linear Webhook Pattern
+service: linear
+events:
+  - issue.created
+  - issue.updated
+  - issue.closed
+
+payload_example:
+  action: create
+  type: Issue
+  data:
+    id: "uuid-123"
+    title: "Fix bug in runner"
+    description: "Memory leak in node executor"
+    status:
+      id: "status-uuid"
+      name: "Todo"
+      type: "unstarted"
+    priority: 1
+    team:
+      id: "team-uuid"
+      key: "BL1"
+      name: "Blink Team"
+    assignee:
+      id: "user-uuid"
+      name: "John Doe"
+  url: "https://linear.app/bl1nk/issue/BL1-1/fix-bug-in-runner"
+  createdAt: "2026-06-14T10:00:00.000Z"
+
+mapping:
+  id: "data.id"
+  summary: "data.title"
+  content: "data.description"
+  url: "url"
+  status: "data.status.name"
+  team_key: "data.team.key"

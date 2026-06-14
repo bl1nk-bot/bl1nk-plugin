@@ -1,0 +1,33 @@
+# Lark Webhook Pattern
+service: lark
+events:
+  - im.message.receive_v1
+  - drive.file.created_v1
+
+payload_example:
+  header:
+    event_id: "evt_1234567890"
+    event_type: "im.message.receive_v1"
+    create_time: "1718359200000"
+    token: "v-123456"
+    app_id: "cli_123"
+  event:
+    message:
+      chat_id: "oc_123"
+      chat_type: "group"
+      content: "{\"text\":\"Hello bl1nk! Please process this.\"}"
+      create_time: "1718359200000"
+      message_id: "om_123"
+      message_type: "text"
+    sender:
+      sender_id:
+        open_id: "ou_123"
+        user_id: "u_123"
+      sender_type: "user"
+
+mapping:
+  id: "header.event_id"
+  msg_id: "event.message.message_id"
+  content: "event.message.content"
+  chat_id: "event.message.chat_id"
+  sender_id: "event.sender.sender_id.open_id"

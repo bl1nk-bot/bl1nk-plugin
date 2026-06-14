@@ -1,0 +1,39 @@
+# GitHub Webhook Pattern
+service: github
+events:
+  - issues
+  - pull_request
+  - push
+
+payload_example:
+  action: opened
+  issue:
+    id: 123456
+    node_id: "MDU6SXNzdWUxMjM0NTY="
+    number: 42
+    title: "Update runner docs"
+    body: "Add Modal setup guide for bl1nk runner"
+    user:
+      login: "octocat"
+      id: 1
+      type: "User"
+    state: "open"
+    labels:
+      - name: "bug"
+        color: "d73a4a"
+    created_at: "2026-06-14T10:00:00Z"
+  repository:
+    id: 987654
+    name: "bl1nk-plugin"
+    full_name: "bl1nk/bl1nk-plugin"
+    private: false
+  sender:
+    login: "octocat"
+
+mapping:
+  id: "issue.id"
+  number: "issue.number"
+  summary: "issue.title"
+  content: "issue.body"
+  author: "issue.user.login"
+  repo: "repository.full_name"

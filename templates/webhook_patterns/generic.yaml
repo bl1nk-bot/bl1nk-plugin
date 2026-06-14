@@ -1,0 +1,22 @@
+# Generic Webhook Pattern
+service: generic
+events:
+  - "*"
+
+payload_example:
+  id: "msg_001"
+  timestamp: "2026-06-14T10:00:00Z"
+  event_type: "notification"
+  source: "external_service"
+  data:
+    text: "Ping from remote system"
+    metadata:
+      priority: "high"
+      category: "alert"
+
+mapping:
+  id: "id"
+  summary: "data.text"
+  time: "timestamp"
+  type: "event_type"
+  source: "source"
