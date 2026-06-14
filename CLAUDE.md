@@ -34,6 +34,10 @@ See `TODO.md` for the authoritative checklist and `PLAN.md` for phase ordering
 (Phases A–E). When asked to "continue the spike", check these two files first to find
 the next unchecked item.
 
+**Latest session handoff:** `@HANDOFF.md` (v2, 2026-06-14) — detailed report of spike
+goal, work status, and next steps. New sessions should read it alongside `TODO.md`
+before starting work.
+
 ## Repository Structure
 
 ```bash
