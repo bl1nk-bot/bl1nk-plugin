@@ -36,7 +36,7 @@ the next unchecked item.
 
 ## Repository Structure
 
-```
+```text
 schema/
   migrations/        # Numbered SQL migrations, run in order (001 → 005)
   types/
@@ -72,7 +72,7 @@ SQLite section in the same file:
 -- ============================================================
 -- [PG] PostgreSQL
 -- ============================================================
--- [PG] CREATE TABLE ... (entire block commented out with `-- [PG] ` prefix)
+-- [PG] CREATE TABLE ... (entire block commented out with `-- [PG]` prefix)
 
 -- ============================================================
 -- [SQ] SQLite
@@ -80,7 +80,7 @@ SQLite section in the same file:
 CREATE TABLE ...   -- active SQLite statements, uncommented
 ```
 
-- The `-- [PG] ` prefixed lines are the Postgres equivalent, kept commented out. SQLite
+- The `-- [PG]` prefixed lines are the Postgres equivalent, kept commented out. SQLite
   is currently the "live" engine. When adding a table/column, **write both blocks** —
   update the `[PG]` comment block AND the active `[SQ]` SQL, keeping them structurally
   equivalent (types differ: `UUID`/`JSONB`/`TIMESTAMPTZ`/`TEXT[]` in PG vs
@@ -115,7 +115,7 @@ CREATE TABLE ...   -- active SQLite statements, uncommented
 Every node/edge belongs to one of **8 categories** (enforced via `CHECK` constraints on
 `flow_nodes.type` and `node_types.category`):
 
-```
+```text
 trigger | data | function | db | storage | cache | output | notify
 ```
 
