@@ -41,7 +41,9 @@ def webhook():
             flow_id = request.headers.get("X-Bl1nk-Flow-ID")
         
         runner = ModalRunner()
-        result = await runner.run_active_flow.remote_gen(payload, flow_id)
+        runner = ModalRunner()
+        result = await runner.run_active_flow.remote.aio(payload, flow_id)
+        return JSONResponse(content=result)
         return JSONResponse(content=result)
 
     return web_app
