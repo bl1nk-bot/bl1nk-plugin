@@ -16,7 +16,7 @@
 
 ## Architecture
 
-```
+```text
 [Linear / Lark / GitHub]
         ↓ webhook
 [Modal.com endpoint]       ← flow runner (serverless)
@@ -211,7 +211,7 @@ settings:
 
 ### Functions
 
-```
+```text
 flow_loader(flow_id) → {nodes: [...], edges: [...]}
 node_executor(type, config, input) → output
 health_check() → {"status": "healthy", "active_flows": N}

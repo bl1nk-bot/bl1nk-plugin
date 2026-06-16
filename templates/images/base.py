@@ -6,11 +6,11 @@ bl1nk_image = (
     modal.Image.debian_slim()
     .apt_install("sqlite3", "libsqlite3-dev")
     .pip_install(
-        "sqlite3",
         "pyyaml",
         "requests",
         "pydantic",
-        "python-dotenv"
+        "python-dotenv",
+        "fastapi",
     )
     .run_commands("mkdir -p /data")
 )

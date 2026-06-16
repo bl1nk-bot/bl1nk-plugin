@@ -143,7 +143,7 @@ bl1nk-plugin/
 
 ## 7. Database (ล็อคแล้ว — migrations เสร็จ)
 
-**Backbone tables (13 tables):**
+**Backbone tables (10 tables):**
 ```
 users, plugins, flows, flow_nodes, flow_edges,
 flow_versions, flow_heads, flow_deployments,
