@@ -4,7 +4,8 @@ set -e
 # Phase C1: bootstrap.sh
 # อัตโนมัติ: ตั้งค่า DB -> รัน Migrations -> Deploy Modal
 
-DB_PATH="/data/bl1nk.db"
+DB_PATH="./bl1nk.db"
+MIGRATIONS_DIR="./schema/migrations"
 MIGRATIONS_DIR="./schema/migrations"
 
 echo "🚀 Starting bl1nk-plugin bootstrap..."
