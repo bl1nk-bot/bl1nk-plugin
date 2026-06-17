@@ -1,4 +1,5 @@
 import modal
+import os
 import sqlite3
 import json
 import uuid
@@ -28,6 +29,11 @@ def webhook():
 
     @web_app.post("/")
     async def handle_webhook(payload: Dict[str, Any], request: Request):
+        secret = os.environ.get("WEBHOOK_SECRET")
+        if secret and request.headers.get("X-Bl1nk-Secret") != secret:
+            from fastapi import HTTPException
+            raise HTTPException(status_code=401, detail="Unauthorized")
+
         flow_id = request.headers.get("X-Bl1nk-Flow-ID")
 
         runner = ModalRunner()
@@ -60,17 +66,20 @@ class ModalRunner:
                 SELECT d.flow_id, d.version_id, v.snapshot
                 FROM flow_deployments d
                 JOIN flow_versions v ON d.version_id = v.id
-                WHERE d.flow_id = ? AND d.status = 'active' LIMIT 1
+                WHERE d.flow_id = ? AND d.status = 'active'
+                ORDER BY d.deployed_at DESC LIMIT 1
             """, (flow_id,))
         else:
             cursor.execute("""
                 SELECT d.flow_id, d.version_id, v.snapshot
                 FROM flow_deployments d
                 JOIN flow_versions v ON d.version_id = v.id
-                WHERE d.status = 'active' LIMIT 1
+                WHERE d.status = 'active'
+                ORDER BY d.deployed_at DESC LIMIT 1
             """)
         row = cursor.fetchone()
         if not row:
+            conn.close()
             return {"status": "error", "message": "No active deployment found"}
 
         flow_id, version_id, snapshot_json = row
@@ -136,14 +145,22 @@ class ModalRunner:
 
     async def execute_node(self, node_type: str, config: Dict[str, Any], input_data: Any):
         """Execute specific node logic."""
-        if node_type == "trigger":  return input_data
-        if node_type == "data":     return self._node_data(config, input_data)
-        if node_type == "function": return self._node_function(config, input_data)
-        if node_type == "db":       return self._node_db(config, input_data)
-        if node_type == "storage":  return self._node_storage(config, input_data)
-        if node_type == "cache":    return self._node_cache(config, input_data)
-        if node_type == "output":   return self._node_output(config, input_data)
-        if node_type == "notify":   return self._node_notify(config, input_data)
+        if node_type == "trigger":
+            return input_data
+        if node_type == "data":
+            return self._node_data(config, input_data)
+        if node_type == "function":
+            return self._node_function(config, input_data)
+        if node_type == "db":
+            return self._node_db(config, input_data)
+        if node_type == "storage":
+            return self._node_storage(config, input_data)
+        if node_type == "cache":
+            return self._node_cache(config, input_data)
+        if node_type == "output":
+            return self._node_output(config, input_data)
+        if node_type == "notify":
+            return self._node_notify(config, input_data)
         return input_data
 
     def _node_data(self, config, data):
