@@ -22,7 +22,7 @@ phases — do not assume they're broken or accidentally truncated:
 | File | Status |
 |---|---|
 | `schema/migrations/001_init.sql` … `005_surface.sql` | Implemented |
-| `templates/webhook_patterns/{generic,github,lark,linear}.yaml` | Implemented |
+| `templates/webhook_patterns/{generic,GitHub,lark,linear}.yaml` | Implemented |
 | `templates/modal_runner.py` | Base implementation exists, **flagged for review/fix** (Phase B1) |
 | `templates/images/base.py` | Implemented (Modal image w/ locked deps) |
 | `scripts/bootstrap.sh` | **Stub** — only `#!/bin/bash`, Phase C1 not started |
@@ -34,9 +34,13 @@ See `TODO.md` for the authoritative checklist and `PLAN.md` for phase ordering
 (Phases A–E). When asked to "continue the spike", check these two files first to find
 the next unchecked item.
 
+**Latest session handoff:** `@HANDOFF.md` (v2, 2026-06-14) — detailed report of spike
+goal, work status, and next steps. New sessions should read it alongside `TODO.md`
+before starting work.
+
 ## Repository Structure
 
-```text
+```bash
 schema/
   migrations/        # Numbered SQL migrations, run in order (001 → 005)
   types/
@@ -82,6 +86,7 @@ CREATE TABLE ...   -- active SQLite statements, uncommented
 
 - The `-- [PG]` prefixed lines are the Postgres equivalent, kept commented out. SQLite
   is currently the "live" engine. When adding a table/column, **write both blocks** —
+
   update the `[PG]` comment block AND the active `[SQ]` SQL, keeping them structurally
   equivalent (types differ: `UUID`/`JSONB`/`TIMESTAMPTZ`/`TEXT[]` in PG vs
   `TEXT`/`TEXT`/`TEXT`/`TEXT` JSON-encoded in SQLite).
