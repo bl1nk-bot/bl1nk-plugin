@@ -4,6 +4,10 @@ set -eo pipefail
 # Phase C1: bootstrap.sh
 # อัตโนมัติ: ตั้งค่า DB -> รัน Migrations -> Deploy Modal
 
+# Local SQLite DB for dev/dry-run only.
+# The Modal runner uses /data/bl1nk.db on a Modal Volume (mounted by Modal, not
+# accessible from here). Modal Volume migrations must be run separately via:
+#   modal run templates/modal_runner.py::migrate   (TODO: Phase C)
 DB_PATH="./bl1nk.db"
 MIGRATIONS_DIR="./schema/migrations"
 
